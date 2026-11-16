@@ -64,7 +64,7 @@ The site is plain HTML, CSS, and JavaScript. No npm install, build command, or f
 ## Upload notes
 
 - The included storage setup caps files at **50 MB**, matching the maximum file-size setting available on Supabase Free projects at the time this version was built. Larger files need an eligible paid Supabase plan and a higher configured limit.
-- Uploads over 6 MB use TUS resumable transfers. This adds progress feedback and allows interrupted uploads to be resumed by the browser.
+- Uploads over 6 MB use TUS resumable transfers, with visible progress and automatic retry when the connection drops during an active upload.
 - Videos are stored in the `media` bucket. The public feed only lists videos with `status = 'approved'`.
 - Every new upload starts as `pending`. Review it before it appears publicly.
 - The media bucket is public so approved videos can play without viewers signing in. Upload paths are generated randomly and are not shown in the public feed until approval.
