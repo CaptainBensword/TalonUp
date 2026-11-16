@@ -273,7 +273,7 @@
       const { data: adminFlag } = await supabaseClient.rpc("is_talon_admin");
       state.profile = {
         ...(data || {
-          display_name: state.user.user_metadata?.display_name || state.user.email?.split("@")[0] || "Creator",
+          display_name: state.user.user_metadata?.display_name || "Creator",
           username: ""
         }),
         is_admin: adminFlag === true
@@ -336,7 +336,7 @@
       result = await supabaseClient.auth.signUp({
         email,
         password,
-        options: { data: { display_name: displayName || email.split("@")[0] } }
+        options: { data: { display_name: displayName || "Creator" } }
       });
     } else {
       result = await supabaseClient.auth.signInWithPassword({ email, password });
