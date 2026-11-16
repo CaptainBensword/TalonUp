@@ -126,3 +126,159 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 @media(max-width:900px){.topbar{height:68px;padding:0 15px;gap:12px}.brand{min-width:unset}.brand-mark{width:39px;height:39px;flex-basis:39px}.brand-word{font-size:21px}.top-actions{min-width:unset}.sidebar{top:68px;width:65px;padding:18px 8px}.nav-item{justify-content:center;padding:12px 8px;font-size:0}.nav-icon{font-size:21px}.sidebar-rule{margin:18px 5px}.sidebar-label,.category-nav,.sidebar-bottom{display:none}.main-content{margin-left:65px;padding:17px 17px 55px}.hero-stage{min-height:280px}.feed-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.search{width:min(460px,45vw)}}
 @media(max-width:600px){.topbar{height:auto;min-height:64px;flex-wrap:wrap;padding:8px 12px 10px;gap:8px}.brand{order:0;flex:1}.brand-mark{width:34px;height:34px;flex-basis:34px}.brand-word{font-size:19px}.top-actions{order:1;gap:7px}.button-quiet{padding:8px 10px}.avatar-button{height:34px;min-width:66px;padding:0 10px;font-size:10px}.search{order:2;width:100%;height:39px;flex:0 0 100%;margin:0}.search-suggestions{top:46px}.sidebar{display:none}.main-content{margin:0;padding:12px 10px 55px}.hero-stage{aspect-ratio:auto;height:285px;min-height:285px;max-height:none;background-size:100% 100%;border-radius:10px}.hero-search{left:8%;top:58%;width:84%;height:13%}.hero-search input{font-size:12px;padding-left:12%}.hero-category-hotspots{left:5%;top:76%;width:90%;height:17%;gap:1.2%}.hero-category-hotspots .category-item{border-radius:7px}.feed-toolbar{margin:25px 0 16px}.feed-toolbar h1{font-size:21px}.feed-sort select{min-width:112px;padding-left:9px;padding-right:25px;font-size:9px}.feed-grid{gap:20px 11px}.video-info{gap:7px}.creator-avatar{width:26px;height:26px;flex-basis:26px}.video-copy h3{font-size:11px}.video-meta{font-size:9px}.thumbnail{border-radius:8px}.empty-state{min-height:205px;padding:30px 14px}.field-row{grid-template-columns:1fr}.modal-card{padding:25px 19px}.mobile-footer{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;justify-content:space-between;padding:10px 14px;border-top:1px solid #29232b;background:rgba(9,8,11,.96);color:#8d8490;font-size:10px}.mobile-footer>span:first-child{color:#f2eaf0;font-weight:850;font-style:italic}.watch-details{padding:17px}.watch-details h2{font-size:18px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+
+/* The hero is a real interface placed over a clean crop of the scene.
+   No search field, logo, or category label is baked into the background. */
+.hero-stage{
+  aspect-ratio:1100/366;
+  min-height:310px;
+  max-height:470px;
+  background:#09070b url("assets/talonup-hero-bg.webp") center/cover no-repeat;
+  border:1px solid #30202a;
+  overflow:hidden;
+}
+.hero-stage::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  background:linear-gradient(90deg,rgba(7,5,9,.03),rgba(7,5,9,.08) 55%,rgba(7,5,9,.02));
+}
+.hero-lockup{
+  position:absolute;
+  z-index:2;
+  top:12%;
+  left:0;
+  right:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:18px;
+  pointer-events:none;
+}
+.hero-emblem{
+  width:clamp(54px,6.8vw,88px);
+  height:clamp(54px,6.8vw,88px);
+  object-fit:contain;
+  filter:drop-shadow(0 0 18px rgba(226,14,50,.35));
+}
+.hero-wordmark{
+  color:#f4f1f3;
+  font-size:clamp(38px,5.3vw,68px);
+  font-weight:900;
+  font-style:italic;
+  letter-spacing:-3px;
+  line-height:1;
+  text-shadow:0 5px 24px rgba(0,0,0,.42);
+}
+.hero-wordmark span{color:#f21c42}
+.hero-search{
+  position:absolute;
+  z-index:3;
+  left:19%;
+  top:54%;
+  width:62%;
+  height:15%;
+  min-height:48px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:5px 6px 5px 18px;
+  border:1px solid rgba(226,14,50,.75);
+  border-radius:999px;
+  background:rgba(12,10,14,.94);
+  box-shadow:0 8px 28px rgba(0,0,0,.35),0 0 18px rgba(226,14,50,.09);
+  overflow:hidden;
+}
+.hero-search-icon{
+  width:22px;
+  height:22px;
+  flex:0 0 22px;
+  fill:none;
+  stroke:#e9e3e9;
+  stroke-width:2;
+  stroke-linecap:round;
+}
+.hero-search input{
+  min-width:0;
+  width:100%;
+  height:100%;
+  padding:0 8px;
+  outline:0!important;
+  border:0;
+  background:transparent;
+  color:#fff;
+  font-size:14px;
+  box-shadow:none!important;
+}
+.hero-search input::placeholder{color:#928994}
+.hero-search button{
+  width:42px;
+  height:40px;
+  flex:0 0 42px;
+  margin:0;
+  display:grid;
+  place-items:center;
+  border:0;
+  border-radius:10px;
+  background:#c91032;
+  color:white;
+  font-size:25px;
+  line-height:1;
+  transition:background .18s,transform .18s;
+}
+.hero-search button:hover{background:#f01a40;transform:translateX(1px)}
+.hero-category-hotspots{
+  position:absolute;
+  z-index:3;
+  left:13%;
+  top:77%;
+  width:74%;
+  height:auto;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+}
+.hero-category-hotspots .category-item{
+  flex:1 1 0;
+  min-width:0;
+  min-height:38px;
+  padding:0 10px;
+  border:1px solid rgba(165,39,65,.55);
+  border-radius:9px;
+  background:rgba(14,11,16,.78);
+  color:#e7dfe7;
+  font-size:11px;
+  font-weight:750;
+  text-align:center;
+  box-shadow:0 5px 18px rgba(0,0,0,.18);
+  transition:transform .18s,border-color .18s,background .18s,color .18s,box-shadow .18s;
+}
+.hero-category-hotspots .category-item:hover,
+.hero-category-hotspots .category-item.selected{
+  border-color:#e51c42;
+  background:rgba(119,12,39,.75);
+  color:#fff;
+  transform:translateY(-2px);
+  box-shadow:0 0 18px rgba(226,14,50,.2);
+}
+@media(max-width:900px){
+  .hero-stage{min-height:285px}
+  .hero-lockup{gap:12px}
+  .hero-category-hotspots{left:8%;width:84%;gap:7px}
+  .hero-category-hotspots .category-item{padding:0 6px;font-size:10px}
+}
+@media(max-width:600px){
+  .hero-stage{height:285px;min-height:285px;aspect-ratio:auto;background-position:center}
+  .hero-lockup{top:13%;gap:9px}
+  .hero-emblem{width:48px;height:48px}
+  .hero-wordmark{font-size:37px;letter-spacing:-2px}
+  .hero-search{left:6%;top:51%;width:88%;height:48px;min-height:48px;padding-left:12px}
+  .hero-search input{font-size:12px}
+  .hero-search button{width:36px;height:36px;flex-basis:36px}
+  .hero-category-hotspots{left:4%;top:72%;width:92%;height:auto;gap:5px;flex-wrap:wrap}
+  .hero-category-hotspots .category-item{flex:1 1 28%;min-height:34px;padding:0 5px;font-size:9px}
+}
