@@ -65,18 +65,23 @@
 
     <main class="main-content">
       <section class="hero-stage" aria-label="TalonUp home">
+        <div class="hero-lockup">
+          <img class="hero-emblem" src="assets/talonup-mark.svg" alt="">
+          <div class="hero-wordmark">Talon<span>Up</span></div>
+        </div>
         <form class="hero-search" id="heroSearchForm" role="search">
           <label class="sr-only" for="heroSearchInput">Search videos</label>
+          <svg class="hero-search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg>
           <input id="heroSearchInput" type="search" placeholder="Search videos" autocomplete="off">
           <button type="submit" aria-label="Search videos">→</button>
         </form>
         <div class="hero-category-hotspots" aria-label="Browse categories">
-          <button class="category-item" data-category="Gaming" type="button" aria-label="Gaming"></button>
-          <button class="category-item" data-category="Music" type="button" aria-label="Music"></button>
-          <button class="category-item" data-category="Animation" type="button" aria-label="Animation"></button>
-          <button class="category-item" data-category="Education" type="button" aria-label="Education"></button>
-          <button class="category-item" data-category="Comedy" type="button" aria-label="Comedy"></button>
-          <button class="category-item" data-category="Other" type="button" aria-label="Other"></button>
+          <button class="category-item" data-category="Gaming" type="button">Gaming</button>
+          <button class="category-item" data-category="Music" type="button">Music</button>
+          <button class="category-item" data-category="Animation" type="button">Animation</button>
+          <button class="category-item" data-category="Education" type="button">Education</button>
+          <button class="category-item" data-category="Comedy" type="button">Comedy</button>
+          <button class="category-item" data-category="Other" type="button">Other</button>
         </div>
       </section>
       <section class="feed-toolbar">
