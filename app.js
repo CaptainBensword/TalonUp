@@ -24,7 +24,8 @@
     view: "home",
     activeVideo: null,
     authMode: "signin",
-    isUploading: false
+    isUploading: false,
+    pendingUploadId: null
   };
 
   const VIDEO_SELECT = "id,title,description,category,video_path,thumbnail_path,status,created_at,user_id,profiles(display_name,username)";
@@ -381,6 +382,7 @@
     $("#publishButton").textContent = "Send for review";
     $("#videoTitle").value = "";
     state.isUploading = false;
+    state.pendingUploadId = null;
     openDialog("uploadDialog");
   }
 
@@ -392,6 +394,7 @@
   function updateSelectedFile() {
     const file = $("#videoFile").files[0];
     if (!file) return;
+    state.pendingUploadId = crypto.randomUUID();
     $("#fileLabel").textContent = file.name;
     $("#fileHint").textContent = "Selected video";
     $("#fileMeta").textContent = formatBytes(file.size) + " · " + (file.type || "video file");
@@ -413,8 +416,9 @@
       headers: {
         authorization: "Bearer " + session.access_token,
         apikey: config.SUPABASE_ANON_KEY,
-        "x-upsert": "false"
+        "x-upsert": "true"
       },
+      fingerprint: () => Promise.resolve("talonup-" + objectPath),
       uploadDataDuringCreation: true,
       removeFingerprintOnSuccess: true,
       chunkSize: 6 * 1024 * 1024,
@@ -492,7 +496,8 @@
       const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
       if (sessionError || !sessionData.session) throw new Error("Your session expired. Sign in again and retry.");
       const userId = state.user.id;
-      const videoId = crypto.randomUUID();
+      const videoId = state.pendingUploadId || crypto.randomUUID();
+      state.pendingUploadId = videoId;
       const extension = (file.name.split(".").pop() || "mp4").toLowerCase().replace(/[^a-z0-9]/g, "") || "mp4";
       const videoPath = userId + "/" + videoId + "." + extension;
       await uploadResumable(file, videoPath, sessionData.session);
@@ -505,7 +510,7 @@
         const { error: thumbError } = await supabaseClient.storage.from("media").upload(thumbnailPath, thumbFile, {
           cacheControl: "3600",
           contentType: thumbFile.type,
-          upsert: false
+          upsert: true
         });
         if (thumbError) throw thumbError;
       }
@@ -526,6 +531,7 @@
       }
       $("#progressPercent").textContent = "100%";
       $("#progressBar").style.width = "100%";
+      state.pendingUploadId = null;
       closeDialog("uploadDialog");
       showToast("Video sent for review. It will appear after approval.");
       if (state.view === "uploads") await loadMyUploads();
