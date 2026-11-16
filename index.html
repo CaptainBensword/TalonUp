@@ -5,27 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#c91f40">
   <meta name="description" content="TalonUp is a place to watch, discover, and share videos.">
-  <title>TalonUp — Watch something good</title>
+  <title>TalonUp</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="talonup-theme.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/tus-js-client@4/dist/tus.min.js"></script>
   <script src="config.js"></script>
   <script src="app.js" defer></script>
+  <script src="interactions.js" defer></script>
 </head>
 <body>
   <header class="topbar">
     <a class="brand" href="#" aria-label="TalonUp home" data-view="home">
-      <span class="brand-mark">T</span><span class="brand-word">talon<span>up</span></span>
+      <span class="brand-mark"><img src="assets/talonup-mark.webp" alt=""></span><span class="brand-word">Talon<span>Up</span></span>
     </a>
     <form class="search" id="searchForm" role="search">
       <label class="sr-only" for="searchInput">Search videos</label>
-      <input id="searchInput" type="search" placeholder="Search videos" autocomplete="off">
-      <button class="search-submit" type="submit" aria-label="Search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg></button>
+      <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg>
+      <input id="searchInput" type="search" placeholder="Search videos" autocomplete="off" aria-controls="searchSuggestions" aria-expanded="false">
       <button class="search-clear hidden" id="clearSearch" type="button" aria-label="Clear search">×</button>
+      <div class="search-suggestions hidden" id="searchSuggestions">
+        <div class="suggestions-heading"><span>QUICK SEARCHES</span><button id="randomSearch" type="button">Random search <span aria-hidden="true">↗</span></button></div>
+        <div class="suggestion-list" id="suggestionList"></div>
+      </div>
     </form>
     <div class="top-actions">
       <button class="button button-quiet" id="uploadButton" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m-5 5 5-5 5 5M4 16v4h16v-4"></path></svg><span>Upload</span></button>
@@ -52,24 +58,36 @@
         <button class="category-item" data-category="Other" type="button">Other</button>
       </nav>
       <div class="sidebar-bottom">
-        <div class="sidebar-note"><span class="tiny-mark">T</span><p>Made by Talon<br><span>A place for good videos</span></p></div>
-        <span class="side-version">TALONUP PREVIEW</span>
+        <div class="sidebar-note"><img src="assets/talonup-mark.webp" alt=""><p>Built by Talon</p></div>
+        <span class="side-version">TALONUP</span>
       </div>
     </aside>
 
     <main class="main-content">
-      <section class="intro-row">
+      <section class="hero-stage" aria-label="TalonUp home">
+        <form class="hero-search" id="heroSearchForm" role="search">
+          <label class="sr-only" for="heroSearchInput">Search videos</label>
+          <input id="heroSearchInput" type="search" placeholder="Search videos" autocomplete="off">
+          <button type="submit" aria-label="Search videos">→</button>
+        </form>
+        <div class="hero-category-hotspots" aria-label="Browse categories">
+          <button class="category-item" data-category="Gaming" type="button" aria-label="Gaming"></button>
+          <button class="category-item" data-category="Music" type="button" aria-label="Music"></button>
+          <button class="category-item" data-category="Animation" type="button" aria-label="Animation"></button>
+          <button class="category-item" data-category="Education" type="button" aria-label="Education"></button>
+          <button class="category-item" data-category="Comedy" type="button" aria-label="Comedy"></button>
+          <button class="category-item" data-category="Other" type="button" aria-label="Other"></button>
+        </div>
+      </section>
+      <section class="feed-toolbar">
         <div>
-          <p class="eyebrow"><span class="live-dot"></span> THE VIDEO SPACE</p>
-          <h1 id="pageTitle">Find something worth watching</h1>
-          <p class="intro-copy" id="pageSubtitle">Browse what's new, follow a curiosity, or just see where you end up</p>
+          <p class="feed-kicker" id="feedKicker">TALONUP / HOME</p>
+          <h1 id="pageTitle">Latest videos</h1>
+          <p class="intro-copy" id="pageSubtitle">Recently approved uploads</p>
         </div>
         <div class="feed-sort">
           <label class="sr-only" for="sortSelect">Sort videos</label>
-          <select id="sortSelect">
-            <option value="newest">Newest</option>
-            <option value="oldest">Oldest</option>
-          </select>
+          <select id="sortSelect"><option value="newest">Newest first</option><option value="oldest">Oldest first</option></select>
         </div>
       </section>
 
@@ -84,8 +102,8 @@
 
       <section class="empty-state hidden" id="emptyState">
         <div class="empty-art"><span class="empty-play"><svg viewBox="0 0 24 24"><path d="m9 6 9 6-9 6z"></path></svg></span><span class="orbit orbit-one"></span><span class="orbit orbit-two"></span></div>
-        <h2 id="emptyTitle">It's quiet in here</h2>
-        <p id="emptyCopy">The first videos haven't landed yet. Check back soon, or be the one to start it.</p>
+        <h2 id="emptyTitle">No videos yet</h2>
+        <p id="emptyCopy">Videos will appear here after they are approved.</p>
         <button class="button button-primary" id="emptyUpload" type="button">Upload a video</button>
       </section>
 
@@ -99,7 +117,7 @@
   <dialog class="modal" id="authDialog">
     <form class="modal-card auth-card" id="authForm">
       <button class="modal-close" type="button" data-close="authDialog" aria-label="Close">×</button>
-      <div class="modal-brand"><span class="brand-mark">T</span></div>
+      <div class="modal-brand"><img src="assets/talonup-mark.webp" alt=""></div>
       <p class="eyebrow">YOUR TALONUP ACCOUNT</p>
       <h2 id="authTitle">Welcome back</h2>
       <p class="modal-lead" id="authLead">Sign in to upload and keep track of your videos. Watching is always open.</p>
