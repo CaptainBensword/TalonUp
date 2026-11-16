@@ -1,30 +1,24 @@
 # TalonUp
 
-**TalonUp is a video-sharing platform built by Talon.** Browse without an account, search the feed, and create an account only when you're ready to upload.
+TalonUp is a video-sharing platform built by Talon. Anyone can browse approved videos without an account. An account is only needed to upload or report a video; there is no separate channel setup.
 
-This first version is a lightweight static site with Supabase handling accounts, the database, and video storage. It does not need a build step or a local development environment.
+## In the repository
 
-## What's here
+- `index.html` — page structure
+- `styles.css` and `talonup-theme.css` — layout and visual theme
+- `app.js` and `interactions.js` — feed, search, accounts and upload behavior
+- `assets/` — TalonUp homepage artwork and emblem
+- `config.js` — public Supabase project settings
+- `supabase/setup.sql` — database, security policies and storage bucket
 
-- Public video feed — watching does not require an account
-- Search across video titles, descriptions, categories, and creator names
-- Category filters and newest/oldest sorting
-- Email and password accounts
-- Upload form with title, description, category, and optional thumbnail
-- Resumable video uploads with a visible progress bar
-- Optional creator profile created automatically with the account — no separate channel setup
-- Upload review queue so new videos are not published automatically
-- Report button on approved videos
-- Responsive layout for desktop, tablet, and mobile
+## Connect Supabase (one-time setup)
 
-## Connect the backend
+The site code is in place. A Supabase project is required to provide the shared database, login and video storage. The project must be created in the owner's Supabase account; this repository cannot create that account or project.
 
-The website files are ready, but accounts and shared uploads need a Supabase project. These are setup steps, not code-writing steps.
-
-1. Create a project at [Supabase](https://supabase.com/).
-2. Open the project's **SQL Editor**, create a new query, paste the full contents of [supabase/setup.sql](supabase/setup.sql), and run it.
-3. In Supabase, open **Project Settings → API**. Copy the Project URL and the **publishable key** (or legacy anon key).
-4. Open [config.js](config.js) in this repository and add those two values:
+1. Create a project at [supabase.com](https://supabase.com/).
+2. In the project's SQL Editor, open a new query, paste the contents of [supabase/setup.sql](supabase/setup.sql), and run it.
+3. Open Project Settings → API. Copy the **Project URL** and the **publishable key** (or legacy anon key).
+4. Open [config.js](config.js) and replace the two empty strings:
 
    ```js
    window.TALONUP_CONFIG = {
@@ -34,49 +28,42 @@ The website files are ready, but accounts and shared uploads need a Supabase pro
    };
    ```
 
-   The URL and publishable/anon key are intended for browser apps. **Never put a service-role key or database password in this repository.** Row Level Security is enabled by the setup SQL.
+   The URL and publishable/anon key are designed to be used in browser apps. **Never add a service-role key, database password, or other secret to this public repository.**
 
-5. In Supabase **Authentication → URL Configuration**, set the Site URL to your live TalonUp address and add that address to the Redirect URLs. For GitHub Pages, it will look like:
+5. In Supabase Authentication → URL Configuration, set the Site URL to the live GitHub Pages address and add that same address to the Redirect URLs. For this repository it is:
+   `https://captainbensword.github.io/TalonUp/`
+6. Keep email confirmation enabled. A new user may need to confirm their email before signing in.
 
-   `https://CAPTAINBENSWORD.github.io/TalonUp/`
+## Review access
 
-   Keep email confirmation enabled. Users may need to confirm their email before signing in.
+New videos start as `pending` and are not shown in the public feed until approved.
 
-6. After creating your own TalonUp account, make that account a reviewer by running this in the Supabase SQL Editor (replace the email):
+After creating your own TalonUp account, open the Supabase SQL Editor and run the following statement, replacing the email with the address used for your account:
 
-   ```sql
-   insert into public.talonup_admins (user_id)
-   select id from auth.users where email = 'YOUR-ACCOUNT-EMAIL'
-   on conflict (user_id) do nothing;
-   ```
+```sql
+insert into public.talonup_admins (user_id)
+select id from auth.users where email = 'YOUR-ACCOUNT-EMAIL'
+on conflict (user_id) do nothing;
+```
 
-   Refresh TalonUp. The review queue will appear for that account. Only admins can approve or reject videos.
+The review queue will then appear for that account. Review access is stored in Supabase, not in frontend code.
 
-## Publish the site with GitHub Pages
+## Publishing
 
-1. Open the repository's **Settings → Pages**.
-2. Under **Build and deployment**, choose **Deploy from a branch**.
-3. Select branch `main` and folder `/ (root)`, then save.
-4. Wait for GitHub Pages to publish, then use the generated site address in the Supabase Auth URL settings above.
+GitHub Pages should use branch `main` and folder `/ (root)` under Repository Settings → Pages. No build step or local installation is required.
 
-The site is plain HTML, CSS, and JavaScript. No npm install, build command, or framework setup is required.
+## Uploads
 
-## Upload notes
+- The default bucket limit is 50 MB, matching Supabase Free's maximum per-file setting.
+- Videos larger than 6 MB use resumable TUS uploads with progress and retry support.
+- The `media` bucket is public so approved videos can play without an account.
+- Upload paths are private to the uploader for writes. New database rows remain pending until reviewed.
+- Users may upload a video thumbnail, but the feed never uses the homepage artwork as a video thumbnail.
 
-- The included storage setup caps files at **50 MB**, matching the maximum file-size setting available on Supabase Free projects at the time this version was built. Larger files need an eligible paid Supabase plan and a higher configured limit.
-- Uploads over 6 MB use TUS resumable transfers, with visible progress and automatic retry when the connection drops during an active upload.
-- Videos are stored in the `media` bucket. The public feed only lists videos with `status = 'approved'`.
-- Every new upload starts as `pending`. Review it before it appears publicly.
-- The media bucket is public so approved videos can play without viewers signing in. Upload paths are generated randomly and are not shown in the public feed until approval.
+Supabase references: [file size limits](https://supabase.com/docs/guides/storage/uploads/file-limits) · [resumable uploads](https://supabase.com/docs/guides/storage/uploads/resumable-uploads)
 
-## Current preview boundaries
+## Current scope
 
-This is the first working slice, not a full-scale YouTube replacement. It currently has feed browsing, search, categories, accounts, uploads, review, and reports. Comments, subscriptions, playlists, creator analytics, recommendations, transcoding, and mobile apps are not included yet.
+The first version includes browsing, search across the loaded feed, category filters, newest/oldest sorting, email/password accounts, video uploads, optional thumbnails, review, and reports.
 
-## Safety and ownership
-
-Only upload videos you made or have permission to share. Keep personal information out of public videos. New uploads are held for review, and signed-in viewers can report a video for review. Admin access is assigned in Supabase itself, never in frontend code.
-
----
-
-**TalonUp — Watch something good.**
+Comments, subscriptions, playlists, recommendations, transcoding, creator analytics and mobile apps are not included yet.
