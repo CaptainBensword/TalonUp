@@ -97,6 +97,11 @@ alter table public.talonup_admins enable row level security;
 alter table public.videos enable row level security;
 alter table public.video_reports enable row level security;
 
+-- Explicit API grants; Row Level Security below still decides which rows are visible.
+grant select on public.profiles to anon, authenticated;
+grant select, insert, update, delete on public.videos to anon, authenticated;
+grant select, insert on public.video_reports to authenticated;
+
 drop policy if exists "Public profiles are viewable" on public.profiles;
 create policy "Public profiles are viewable"
   on public.profiles for select
