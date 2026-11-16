@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="TalonUp compass emblem">
+<defs><linearGradient id="steel" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff"/><stop offset=".48" stop-color="#9ca0ad"/><stop offset="1" stop-color="#454652"/></linearGradient></defs>
+<circle cx="50" cy="50" r="43" fill="none" stroke="#e20e32" stroke-width="4"/>
+<path d="M50 3 59 39 96 50 59 61 50 97 41 61 4 50 41 39Z" fill="url(#steel)" stroke="#f5f3f5" stroke-width="1.5"/>
+<path d="M50 3 54 45 50 97 46 45Z" fill="#fff" opacity=".9"/>
+<path d="M13 19 38 40M87 19 62 40M13 81 38 60M87 81 62 60" fill="none" stroke="#e20e32" stroke-width="5" stroke-linecap="round"/>
+<circle cx="50" cy="50" r="7" fill="#111015" stroke="#e20e32" stroke-width="3"/>
+</svg>
