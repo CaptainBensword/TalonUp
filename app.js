@@ -266,13 +266,16 @@
     if (state.user && supabaseClient) {
       const { data } = await supabaseClient
         .from("profiles")
-        .select("display_name,username,is_admin")
+        .select("display_name,username")
         .eq("id", state.user.id)
         .maybeSingle();
-      state.profile = data || {
-        display_name: state.user.user_metadata?.display_name || state.user.email?.split("@")[0] || "Creator",
-        username: "",
-        is_admin: false
+      const { data: adminFlag } = await supabaseClient.rpc("is_talon_admin");
+      state.profile = {
+        ...(data || {
+          display_name: state.user.user_metadata?.display_name || state.user.email?.split("@")[0] || "Creator",
+          username: ""
+        }),
+        is_admin: adminFlag === true
       };
     }
     const button = $("#accountButton");
@@ -686,7 +689,7 @@
   });
   $("#reportForm").addEventListener("submit", handleReport);
 
-  document.querySelectorAll("[data-close]").forEach(button => button.addEventListener("click", () => closeDialog(button.dataset.close)));
+  document.querySelectorAll("[data-close]").forEach(button => button.addEventListener("click", () => { if (!state.isUploading) closeDialog(button.dataset.close); }));
   document.querySelectorAll("dialog").forEach(dialog => {
     dialog.addEventListener("click", event => { if (event.target === dialog && !state.isUploading) dialog.close(); });
   });
