@@ -152,9 +152,9 @@
       grid.classList.add("hidden");
       empty.classList.remove("hidden");
       if (!isConfigured) {
-        $("#emptyTitle").textContent = "TalonUp is ready to connect";
-        $("#emptyCopy").textContent = "The front end is in place. Connect the database and storage to switch on shared videos, accounts, and uploads.";
-        $("#emptyUpload").textContent = "How setup works";
+        $("#emptyTitle").textContent = "No videos loaded";
+        $("#emptyCopy").textContent = "Connect the Supabase project to load the shared video feed.";
+        $("#emptyUpload").textContent = "Upload a video";
       } else if (state.query) {
         $("#emptyTitle").textContent = "No matches this time";
         $("#emptyCopy").textContent = "Try another search or clear the filters.";
@@ -186,18 +186,18 @@
       $("#pageTitle").textContent = "Search results";
       $("#pageSubtitle").textContent = items.length + (items.length === 1 ? " video found" : " videos found");
     } else if (state.view === "explore") {
-      $("#pageTitle").textContent = "Explore videos";
-      $("#pageSubtitle").textContent = "Follow a curiosity and see where it takes you";
+      $("#pageTitle").textContent = "Explore";
+      $("#pageSubtitle").textContent = "Browse by category or search";
     } else {
-      $("#pageTitle").textContent = "Find something worth watching";
-      $("#pageSubtitle").textContent = "Browse what's new, follow a curiosity, or just see where you end up";
+      $("#pageTitle").textContent = "Latest videos";
+      $("#pageSubtitle").textContent = "Recently approved uploads";
     }
     $("#clearSearch").classList.toggle("hidden", !state.query);
   }
 
   async function loadFeed() {
     if (!supabaseClient) {
-      setNotice("Browsing preview", "The video service isn't connected yet. The layout is ready; connect Supabase to turn on shared accounts, search, and uploads.");
+      
       state.videos = [];
       applyFilters();
       return;
@@ -632,7 +632,7 @@
     state.category = button.dataset.category;
     state.view = "explore";
     document.querySelectorAll(".nav-item").forEach(item => item.classList.toggle("active", item.dataset.view === "explore"));
-    document.querySelectorAll(".category-item").forEach(item => item.classList.toggle("selected", item === button));
+    document.querySelectorAll(".category-item").forEach(item => item.classList.toggle("selected", item.dataset.category === state.category));
     applyFilters();
   }));
   $("#uploadButton").addEventListener("click", openUpload);
@@ -707,7 +707,7 @@
 
   // Start the public feed without requiring a sign-in.
   if (!supabaseClient) {
-    setNotice("Browsing preview", "The video service isn't connected yet. The layout is ready; connect Supabase to turn on shared accounts, search, and uploads.");
+    
     state.videos = [];
     applyFilters();
   } else {
