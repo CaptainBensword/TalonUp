@@ -57,7 +57,7 @@ declare
   base_name text;
 begin
   chosen_name := left(
-    coalesce(nullif(trim(new.raw_user_meta_data ->> 'display_name'), ''), nullif(split_part(coalesce(new.email, ''), '@', 1), ''), 'creator'),
+    coalesce(nullif(trim(new.raw_user_meta_data ->> 'display_name'), ''), 'Creator'),
     32
   );
   base_name := lower(regexp_replace(chosen_name, '[^a-zA-Z0-9_]+', '_', 'g'));
