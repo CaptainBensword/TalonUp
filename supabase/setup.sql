@@ -90,7 +90,7 @@ as $$
   );
 $$;
 
-grant execute on function public.is_talon_admin() to authenticated;
+grant execute on function public.is_talon_admin() to anon, authenticated;
 
 alter table public.profiles enable row level security;
 alter table public.talonup_admins enable row level security;
